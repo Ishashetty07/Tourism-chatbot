@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Tourism Chatbot</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <div class="app-container">
+    <div class="chat-card">
+      <header class="chat-header">
+        <div class="logo-circle">T</div>
+        <div>
+          <h1>Tourism Chatbot</h1>
+          <p>Your personal trip planner with live weather & spots</p>
+        </div>
+      </header>
+
+      <div id="chat-window" class="chat-window">
+        <div class="message bot">
+          <div class="avatar">🤖</div>
+          <div class="bubble">
+            Hi! Tell me your travel plan.<br>
+            Examples:<br>
+            • I'm going to go to Bangalore, what's the temperature there?<br>
+            • I'm going to go to Udupi, let's plan my trip.<br>
+            • I'm going to go to Goa, what is the temperature there and what places can I visit?
+          </div>
+        </div>
+      </div>
+
+      <form id="chat-form" class="chat-input-row">
+        <input
+          type="text"
+          id="user-input"
+          placeholder="Type your message here..."
+          autocomplete="off"
+        />
+        <button type="submit">Send</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById("chat-form");
+    const input = document.getElementById("user-input");
+    const chatWindow = document.getElementById("chat-window");
+
+    function appendMessage(text, sender) {
+      const msg = document.createElement("div");
+      msg.className = "message " + sender;
+
+      const avatar = document.createElement("div");
+      avatar.className = "avatar";
+      avatar.textContent = sender === "user" ? "🧑" : "🤖";
+
+      const bubble = document.createElement("div");
+      bubble.className = "bubble";
+      bubble.innerHTML = text.replace(/\n/g, "<br>");
+
+      msg.appendChild(avatar);
+      msg.appendChild(bubble);
+      chatWindow.appendChild(msg);
+      chatWindow.scrollTop = chatWindow.scrollHeight;
+    }
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const text = input.value.trim();
+      if (!text) return;
+
+      appendMessage(text, "user");
+      input.value = "";
+      input.focus();
+
+      // temporary "typing..." message
+      const typingId = "typing-" + Date.now();
+      appendMessage("Typing...", "bot");
+      const typingMsg = chatWindow.lastElementChild;
+
+      try {
+        const res = await fetch("/chat", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ message: text }),
+        });
+        const data = await res.json();
+        chatWindow.removeChild(typingMsg);
+        appendMessage(data.reply, "bot");
+      } catch (err) {
+        chatWindow.removeChild(typingMsg);
+        appendMessage("Sorry, something went wrong. Please try again.", "bot");
+      }
+    });
+  </script>
+</body>
+</html>
