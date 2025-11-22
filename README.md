@@ -1,4 +1,11 @@
 # 🌍 Tourism Chatbot – Multi-Agent Travel Assistant
+## 🔗 Live Demo
+
+You can try the Tourism Chatbot here:
+
+👉 *https://tourism-chatbot-0ge7.onrender.com*
+
+The service is hosted on Render (Free Tier), so the first load may take 20–30 seconds due to cold start.
 
 [![Python](https://img.shields.io/badge/Python-3.10%2B-blue?logo=python)](https://www.python.org/)
 [![Flask](https://img.shields.io/badge/Flask-Web%20Framework-green?logo=flask)](https://flask.palletsprojects.com/)
